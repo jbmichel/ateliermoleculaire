@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atelier Moléculaire</title>
+<meta name="description" content="AI and molecular design for beauty brands.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400&family=Geist+Mono:wght@400&display=swap">
+<style>
+/* Layout: one screen, a measured grid like lab-notebook paper; name and line centred vertically, contact and scale bar on the bottom edge. Deliberately single-theme: white and black. */
+* { box-sizing: border-box; }
+:root {
+  --paper: #ffffff;
+  --ink: #0b0b0b;
+  --grey: #4a4a4a;
+  --faint: #9a9a9a;
+  --grid: rgba(11, 11, 11, .05);
+  --sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 15px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+
+.page {
+  position: relative; min-height: 100%; box-sizing: border-box;
+  display: grid; grid-template-rows: 1fr auto;
+  padding-left: max(clamp(28px, 7vw, 96px), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(28px, 7vw, 96px), env(safe-area-inset-right, 0px));
+  padding-block: clamp(40px, 7vw, 88px);
+}
+.grid {
+  position: fixed; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 40px 40px; background-position: -1px -1px;
+}
+.cross { position: fixed; width: 14px; height: 14px; pointer-events: none; }
+.cross::before, .cross::after { content: ""; position: absolute; background: var(--ink); }
+.cross::before { left: 6px; top: 0; width: 1px; height: 14px; }
+.cross::after { top: 6px; left: 0; height: 1px; width: 14px; }
+.c1 { top: calc(20px + env(safe-area-inset-top, 0px)); left: calc(20px + env(safe-area-inset-left, 0px)); }
+.c2 { top: calc(20px + env(safe-area-inset-top, 0px)); right: calc(20px + env(safe-area-inset-right, 0px)); }
+.c3 { bottom: calc(20px + env(safe-area-inset-bottom, 0px)); left: calc(20px + env(safe-area-inset-left, 0px)); }
+.c4 { bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: calc(20px + env(safe-area-inset-right, 0px)); }
+
+main { position: relative; align-self: center; display: grid; gap: 24px; padding-block: 48px; }
+h1 { font: 400 clamp(44px, 9vw, 128px)/.95 var(--sans); letter-spacing: -.045em; margin: 0; }
+h1 span { display: block; }
+.tag { font: 400 clamp(13px, 1.3vw, 15px)/1.5 var(--mono); letter-spacing: .02em; color: var(--grey); margin: 0; max-width: 40ch; }
+
+footer { position: relative; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px; font: 400 12px/1 var(--mono); letter-spacing: .04em; }
+.contact { color: var(--ink); text-decoration: none; text-transform: uppercase; letter-spacing: .1em; padding: 6px 0; }
+.contact::before { content: "[ "; color: var(--faint); transition: margin .2s; }
+.contact::after { content: " ]"; color: var(--faint); transition: margin .2s; }
+.contact:hover::before { margin-right: 6px; }
+.contact:hover::after { margin-left: 6px; }
+.contact:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
+.scale { display: flex; align-items: center; gap: 8px; color: #6a6a6a; }
+.scale i { display: block; width: 60px; height: 6px; border: 1px solid var(--ink); border-top: 0; }
+
+@media (max-width: 480px) { .scale { display: none; } }
+@media (prefers-reduced-motion: reduce) { .contact::before, .contact::after { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="grid" aria-hidden="true"></div>
+<span class="cross c1" aria-hidden="true"></span>
+<span class="cross c2" aria-hidden="true"></span>
+<span class="cross c3" aria-hidden="true"></span>
+<span class="cross c4" aria-hidden="true"></span>
+
+<div class="page">
+  <main>
+    <h1><span>Atelier</span><span>Moléculaire</span></h1>
+    <p class="tag">AI and molecular design for beauty brands.</p>
+  </main>
+  <footer>
+    <a class="contact" href="mailto:hello@ateliermoleculaire.com">Contact us</a>
+    <span class="scale" aria-hidden="true"><i></i>1 nm</span>
+  </footer>
+</div>
+</body>
+</html>
