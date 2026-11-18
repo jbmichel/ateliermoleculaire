@@ -267,11 +267,14 @@ footer {
   const DWELL = 650;
   // Idle fidgets: when the name has rested untouched for a while, a letter stirs now and then,
   // or a slow ripple runs along the word like a strand flexing, inviting a hover or a pull.
-  const IDLE_BEFORE_FIDGET = 3500;
+  // The first one comes sooner, right after the page loads.
+  const IDLE_BEFORE_FIDGET = 3500, FIRST_FIDGET = 500;
+  let fidgeted = false;
   let lastPointer = 0, restingSince = 0, fidget = null, nextFidget = 0;
   // Tease: after a longer while with no hover or click on a letter, a letter turns into its
   // amino acid by itself, sometimes followed by a few neighbours; the usual return brings them back.
-  const IDLE_BEFORE_TEASE = 8000;
+  const IDLE_BEFORE_TEASE = 8000, FIRST_TEASE = 3000;
+  let teased = false;
   let lastLetterTouch = 0, teaseQueue = null, nextTease = 0;
   const IDLE_BEFORE_RETURN = 2200, RETURN_RAMP = 4000, PAUSE_BEFORE_POP = 900;
 
@@ -474,7 +477,8 @@ footer {
     if (!resting) restingSince = 0;
     else if (!restingSince) restingSince = time;
     if (fidget && time - fidget.start > fidget.dur) fidget = null;
-    if (!reduce && resting && !fidget && time - Math.max(restingSince, lastPointer) > IDLE_BEFORE_FIDGET && time >= nextFidget) {
+    if (!reduce && resting && !fidget && time - Math.max(restingSince, lastPointer) > (fidgeted ? IDLE_BEFORE_FIDGET : FIRST_FIDGET) && time >= nextFidget) {
+      fidgeted = true;
       fidget = Math.random() < 0.35
         ? { type: 'ripple', start: time, dur: 2400, dir: Math.random() < 0.5 ? 1 : -1 }
         : { type: 'stir', start: time, dur: 1300, i: Math.floor(Math.random() * N) };
@@ -485,7 +489,8 @@ footer {
     if (teaseQueue) {
       while (teaseQueue.length && time >= teaseQueue[0].at) toResidue(teaseQueue.shift().i);
       if (!teaseQueue.length) teaseQueue = null;
-    } else if (!reduce && resting && time - Math.max(restingSince, lastLetterTouch) > IDLE_BEFORE_TEASE && time >= nextTease) {
+    } else if (!reduce && resting && time - Math.max(restingSince, lastLetterTouch) > (teased ? IDLE_BEFORE_TEASE : FIRST_TEASE) && time >= nextTease) {
+      teased = true;
       const count = 1 + Math.floor(Math.random() * 4);
       let i = Math.floor(Math.random() * N), dir = Math.random() < 0.5 ? 1 : -1;
       const picks = [i];
