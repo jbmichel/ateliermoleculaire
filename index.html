@@ -268,15 +268,15 @@ footer {
   // Idle fidgets: when the name has rested untouched for a while, a letter stirs now and then,
   // or a slow ripple runs along the word like a strand flexing, inviting a hover or a pull.
   // The first one comes sooner, right after the page loads.
-  const IDLE_BEFORE_FIDGET = 3500, FIRST_FIDGET = 500;
+  const IDLE_BEFORE_FIDGET = 1200, FIRST_FIDGET = 500;
   let fidgeted = false;
   let lastPointer = 0, restingSince = 0, fidget = null, nextFidget = 0;
   // Tease: after a longer while with no hover or click on a letter, a letter turns into its
   // amino acid by itself, sometimes followed by a few neighbours; the usual return brings them back.
-  const IDLE_BEFORE_TEASE = 8000, FIRST_TEASE = 3000;
+  const IDLE_BEFORE_TEASE = 1500, FIRST_TEASE = 1500;
   let teased = false;
   let lastLetterTouch = 0, teaseQueue = null, nextTease = 0;
-  const IDLE_BEFORE_RETURN = 2200, RETURN_RAMP = 4000, PAUSE_BEFORE_POP = 900;
+  const IDLE_BEFORE_RETURN = 2200, IDLE_BEFORE_RETURN_CHAIN = 4500, RETURN_RAMP = 4000, PAUSE_BEFORE_POP = 900;
 
   function syncUI() {
     const anyRes = nodes.some(n => n.mode === 'res');
@@ -348,7 +348,7 @@ footer {
   document.addEventListener('pointerleave', () => { hover = -1; });
 
   // Physics: Verlet nodes in a viscous liquid.
-  const DAMP = 0.9;
+  const DAMP = 0.925;
   const ease = t => t * t * (3 - 2 * t);
   function relax(a, b, rest, k) {
     const dx = b.p.x - a.p.x, dy = b.p.y - a.p.y, d = Math.hypot(dx, dy) || 1e-6;
@@ -369,7 +369,9 @@ footer {
   function step(time) {
     const anyRes = nodes.some(n => n.mode === 'res');
     const idle = !reforming && drag < 0 && anyRes;
-    const want = idle ? Math.min(1, Math.max(0, (time - lastActivity - IDLE_BEFORE_RETURN) / RETURN_RAMP)) : 0;
+    const allRes = nodes.every(n => n.mode === 'res');
+    const wait = allRes ? IDLE_BEFORE_RETURN_CHAIN : IDLE_BEFORE_RETURN;
+    const want = idle ? Math.min(1, Math.max(0, (time - lastActivity - wait) / RETURN_RAMP)) : 0;
     homing += (want - homing) * (want > homing ? 1 : 0.2);
     if (!anyRes) homing = 0;
     const pull = 0.011 * ease(homing);
@@ -380,8 +382,15 @@ footer {
       n.q.x = n.p.x; n.q.y = n.p.y;
       if (!reduce && !reforming) {
         const calm = 1 - homing;
-        vx += Math.sin(time * 0.0006 + i * 1.7) * L * 0.0005 * calm;
-        vy += Math.cos(time * 0.0005 + i * 2.3) * L * 0.0005 * calm;
+        vx += Math.sin(time * 0.0006 + i * 1.7) * L * 0.0009 * calm;
+        vy += Math.cos(time * 0.0005 + i * 2.3) * L * 0.0009 * calm;
+        // A slow wave travels along the strand, pushing across it, so the chain keeps writhing.
+        const a = nodes[i - 1], b = nodes[i + 1];
+        if (a && b && a.mode === 'res' && b.mode === 'res') {
+          const tx = b.p.x - a.p.x, ty = b.p.y - a.p.y, tl = Math.hypot(tx, ty) || 1;
+          const w = (Math.sin(time * 0.0017 - i * 0.65) + 0.5 * Math.sin(time * 0.0011 + i * 0.4)) * L * 0.0011 * calm;
+          vx += -ty / tl * w; vy += tx / tl * w;
+        }
       }
       if (pull) { vx += (n.home.x - n.p.x) * pull; vy += (n.home.y - n.p.y) * pull; }
       n.p.x += vx; n.p.y += vy;
@@ -482,7 +491,7 @@ footer {
       fidget = Math.random() < 0.35
         ? { type: 'ripple', start: time, dur: 2400, dir: Math.random() < 0.5 ? 1 : -1 }
         : { type: 'stir', start: time, dur: 1300, i: Math.floor(Math.random() * N) };
-      nextFidget = time + fidget.dur + 2200 + Math.random() * 2600;
+      nextFidget = time + fidget.dur + 700 + Math.random() * 1500;
     }
 
     // Tease: one letter unfolds, then maybe up to three of its neighbours along the chain.
@@ -502,7 +511,7 @@ footer {
       let at = time;
       teaseQueue = picks.map(i => ({ i, at: (at += picks[0] === i ? 0 : 380 + Math.random() * 300) }));
       fidget = null;
-      nextTease = time + 14000 + Math.random() * 8000;
+      nextTease = time + 4000 + Math.random() * 4000;
     }
   }
 
@@ -620,6 +629,13 @@ footer {
       if (i === hover && n.mode === 'home' && !reduce) {
         const prog = Math.min(1, (time - hoverStart) / DWELL), amp = prog * prog * fs * 0.035;
         wx = Math.sin(time * 0.045) * amp; wy = Math.cos(time * 0.061) * amp * 0.6; rot = Math.sin(time * 0.03) * prog * prog * 0.06;
+      }
+      // Always a little life: each letter floats gently, and a soft swell drifts along the name.
+      if (n.mode === 'home' && !reduce) {
+        const swell = Math.pow(0.5 + 0.5 * Math.sin(time * 0.0009 - i * 0.5), 6);
+        wx += Math.sin(time * 0.0013 + i * 2.1) * fs * 0.004;
+        wy += Math.sin(time * 0.0017 + i * 1.3) * fs * 0.006 - swell * fs * 0.018 * (0.6 + 0.4 * Math.sin(time * 0.006 + i));
+        rot += Math.sin(time * 0.0011 + i * 1.7) * 0.012 + swell * 0.025 * Math.sin(time * 0.004 + i * 2);
       }
       const f = fidgetOffset(i, time);
       if (f) { wx += f[0]; wy += f[1]; rot += f[2]; }
