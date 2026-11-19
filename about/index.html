@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About · Atelier Moléculaire</title>
+<meta name="description" content="Atelier Moléculaire is an AI-driven R&amp;D lab building new molecules and formulations for beauty brands, with AI design and in-house lab experiments in the loop.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400&family=Geist+Mono:wght@400&display=swap">
+<style>
+/* The about page: the home page's lab-notebook grid and crosses, with the text laid out as notebook entries. */
+* { box-sizing: border-box; }
+:root {
+  --paper: #ffffff;
+  --ink: #0b0b0b;
+  --grey: #4a4a4a;
+  --soft: #8a8a8a;
+  --rule: rgba(11, 11, 11, .14);
+  --grid: rgba(11, 11, 11, .05);
+  --sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+html { background: var(--paper); }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased;
+}
+.grid {
+  position: fixed; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 40px 40px; background-position: -1px -1px;
+}
+.cross { position: fixed; width: 14px; height: 14px; pointer-events: none; }
+.cross::before, .cross::after { content: ""; position: absolute; background: var(--ink); }
+.cross::before { left: 6px; top: 0; width: 1px; height: 14px; }
+.cross::after { top: 6px; left: 0; height: 1px; width: 14px; }
+.c1 { top: calc(20px + env(safe-area-inset-top, 0px)); left: calc(20px + env(safe-area-inset-left, 0px)); }
+.c2 { top: calc(20px + env(safe-area-inset-top, 0px)); right: calc(20px + env(safe-area-inset-right, 0px)); }
+.c3 { bottom: calc(20px + env(safe-area-inset-bottom, 0px)); left: calc(20px + env(safe-area-inset-left, 0px)); }
+.c4 { bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: calc(20px + env(safe-area-inset-right, 0px)); }
+
+.page {
+  position: relative;
+  padding-left: max(clamp(28px, 7vw, 96px), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(28px, 7vw, 96px), env(safe-area-inset-right, 0px));
+  padding-block: clamp(48px, 7vw, 88px);
+}
+.mono { font: 400 12px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+nav { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; }
+nav a { color: var(--ink); text-decoration: none; }
+nav .here { color: var(--soft); }
+a.bracket::before { content: "[ "; color: #9a9a9a; transition: margin .2s; }
+a.bracket::after { content: " ]"; color: #9a9a9a; transition: margin .2s; }
+a.bracket:hover::before { margin-right: 6px; }
+a.bracket:hover::after { margin-left: 6px; }
+a:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
+
+header { padding-block: clamp(64px, 12vw, 140px) clamp(48px, 8vw, 96px); }
+h1 { font: 400 clamp(40px, 7vw, 96px)/.98 var(--sans); letter-spacing: -.045em; margin: 0 0 28px; }
+h1 .word { display: block; }
+.live h1 { color: transparent; }
+/* The name's canvas covers the first screen, so a pulled chain can float over the page. */
+#stage { position: absolute; top: 0; left: 0; width: 100%; height: max(100vh, 720px); pointer-events: none; z-index: 1; }
+#name { touch-action: none; -webkit-user-select: none; user-select: none; }
+.lede { font: 400 clamp(14px, 1.4vw, 16px)/1.5 var(--mono); letter-spacing: .02em; color: var(--grey); margin: 0; max-width: 44ch; }
+
+.entry {
+  display: grid; grid-template-columns: minmax(120px, 1fr) minmax(0, 3fr); gap: 24px clamp(24px, 5vw, 64px);
+  border-top: 1px solid var(--rule); padding-block: 32px 40px;
+}
+.entry h2 { margin: 0; padding-top: 4px; font-weight: 400; display: flex; gap: 14px; }
+.entry h2 .n { color: var(--soft); }
+.entry .body { max-width: 62ch; }
+.entry p { margin: 0 0 1em; }
+.entry p:last-child { margin-bottom: 0; }
+.body a { color: inherit; text-decoration: underline; text-decoration-color: rgba(11, 11, 11, .3); text-decoration-thickness: 1px; text-underline-offset: 3px; transition: text-decoration-color .2s; }
+.body a:hover { text-decoration-color: var(--ink); }
+.loop { margin: 16px 0 0; border: 1px solid var(--rule); background: var(--paper); }
+.loop canvas { display: block; width: 100%; aspect-ratio: 2.3 / 1; min-height: 220px; }
+.loop figcaption { border-top: 1px solid var(--rule); padding: 10px 20px; color: var(--soft); font: 400 12px/1.5 var(--mono); letter-spacing: .02em; }
+@media (max-width: 560px) { .loop canvas { aspect-ratio: 1.45 / 1; } }
+.example {
+  margin: 1.4em 0 0; padding: 16px 20px; border: 1px solid var(--rule); background: var(--paper);
+  color: var(--grey);
+}
+.example .mono { display: block; color: var(--soft); margin-bottom: 8px; }
+
+footer {
+  border-top: 1px solid var(--rule); padding-top: 32px; margin-top: 8px;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 24px; flex-wrap: wrap;
+}
+footer a { color: var(--ink); text-decoration: none; }
+footer .soft { color: var(--soft); }
+
+@media (max-width: 640px) {
+  .entry { grid-template-columns: 1fr; gap: 16px; padding-block: 28px 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  a.bracket::before, a.bracket::after { transition: none; }
+}
+</style>
+</head>
+<body>
+<div class="grid" aria-hidden="true"></div>
+<span class="cross c1" aria-hidden="true"></span>
+<span class="cross c2" aria-hidden="true"></span>
+<span class="cross c3" aria-hidden="true"></span>
+<span class="cross c4" aria-hidden="true"></span>
+
+<canvas id="stage" aria-hidden="true"></canvas>
+<div class="page">
+  <nav class="mono">
+    <a href="/">Atelier Moléculaire</a>
+    <span class="here">About</span>
+  </nav>
+
+  <header>
+    <h1 id="name"><span class="word">Atelier</span><span class="word">Moléculaire</span></h1>
+    <p class="lede">AI-driven molecular innovation for beauty brands.</p>
+  </header>
+
+  <section class="entry" aria-labelledby="what">
+    <h2 class="mono" id="what"><span class="n">01</span>What</h2>
+    <div class="body">
+      <p>AI is making exponential progress in technical fields including <a href="https://www.physicsx.ai/" target="_blank" rel="noopener">industrial engineering</a>, <a href="https://www.ft.com/content/5c2ae092-14af-4bd1-8e3d-8996755cba6a" target="_blank" rel="noopener">materials discovery</a>, and <a href="https://www.nobelprize.org/prizes/chemistry/2024/press-release/" target="_blank" rel="noopener">biopharma</a>. We bring these capabilities to beauty brands to radically alter the technical innovation cycle: new and better molecules and formulations, engineered faster and with greater precision.</p>
+      <p>Early-stage drug discovery is <a href="https://www.fiercebiotech.com/biotech/isomorphic-labs-adds-merck-ai-drug-discovery-roster-days-after-5b-raise" target="_blank" rel="noopener">being transformed</a> by rapid progress in AI. This is particularly true of molecule design, where models are now powerful enough to reason about molecular structures. The bottleneck is moving to experimentation: in response, <a href="https://www.biorxiv.org/content/10.1101/2025.02.19.639050v1" target="_blank" rel="noopener">lab-in-the-loop</a>, where AI design drives in vitro experiments, is emerging as a potent format to rapidly engineer better pharmaceutical molecules.</p>
+      <p>We adapt the cutting edge of molecule discovery to the consumer space. Beauty brands are at the forefront of the mounting consumer demand for newer, more personalized molecules that better connect wellness to health. We are building the platform to meet this demand.</p>
+    </div>
+  </section>
+
+  <section class="entry" aria-labelledby="how">
+    <h2 class="mono" id="how"><span class="n">02</span>How</h2>
+    <div class="body">
+      <p>We partner with beauty brands to build new molecules and formulations that meet their objectives, with increasingly higher performance.</p>
+      <p>We build a lab-in-the-loop for beauty, so that we can best discover new peptides and molecules with optimal lab data, both in terms of safety and efficacy. By combining AI design with in-house experiments, we explore vastly more design space than possible otherwise, guided by concrete lab data.</p>
+      <div class="example">
+        <span class="mono">Example</span>
+        We might engineer peptides or small molecules with high performance on skin clarification. We would rapidly iterate over hundreds of designs, feeding lab data back to our design engine in iterative fashion, resulting in molecules that meet the objectives of our partner.
+      </div>
+      <figure class="loop">
+        <canvas id="loop" role="img" aria-label="Schematic of the lab-in-the-loop: designed peptides go to a cellular assay, the readout picks the best one, and the lab data feeds the next round of designs, whose scores climb round after round."></canvas>
+        <figcaption>Lab-in-the-loop, schematically: each round, new peptide designs are tested on cells, and the readout guides the next round.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="entry" aria-labelledby="who">
+    <h2 class="mono" id="who"><span class="n">03</span>Who</h2>
+    <div class="body">
+      <p>Founding team with deep expertise in AI, engineering, molecular design, consumer goods, and beauty. Serial entrepreneurs with several exits and long scientific, operational, and business track records.</p>
+    </div>
+  </section>
+
+  <section class="entry" aria-labelledby="when">
+    <h2 class="mono" id="when"><span class="n">04</span>When</h2>
+    <div class="body">
+      <p>Now. We expect to work with a small number of design partners as we build our platform.</p>
+    </div>
+  </section>
+
+  <footer class="mono">
+    <a class="bracket" href="mailto:hello@ateliermoleculaire.com">Contact us</a>
+    <span class="soft">hello@ateliermoleculaire.com</span>
+  </footer>
+</div>
+<script>
+// Lab-in-the-loop, schematically: a batch of designed peptides goes to a cellular assay,
+// the readout picks the best one, and its data goes back to design the next, better batch.
+(() => {
+  const cv = document.getElementById('loop');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const INK = '#0b0b0b', SOFT = '#8a8a8a', FAINT = '#cfcfcf', PAPER = '#ffffff';
+  const MONO = '400 10px "Geist Mono", ui-monospace, Menlo, monospace';
+  const K = 6, BEADS = 5, ROUND = 6000, ROUNDS = 8;
+  const clamp = v => Math.max(0, Math.min(1, v));
+  const ease = v => { v = clamp(v); return v * v * (3 - 2 * v); };
+
+  // A fixed, seeded history so the scores climb believably round after round.
+  let seed = 11;
+  const rnd = () => (seed = seed * 16807 % 2147483647) / 2147483647;
+  const rounds = [];
+  {
+    let parent = [0, 1, 2, 0, 1], best = 0;
+    for (let r = 0; r < ROUNDS; r++) {
+      const base = 0.2 + 0.66 * (1 - Math.exp(-r / 2.4));
+      const peps = [];
+      for (let k = 0; k < K; k++) {
+        const beads = parent.slice(), mut = Math.floor(rnd() * BEADS);
+        beads[mut] = (beads[mut] + 1 + Math.floor(rnd() * 2)) % 3;
+        peps.push({ beads, mut, score: Math.max(0.06, Math.min(0.96, base + (rnd() - 0.65) * 0.32)) });
+      }
+      let bi = 0;
+      peps.forEach((p, k) => { if (p.score > peps[bi].score) bi = k; });
+      best = Math.max(best, peps[bi].score);
+      parent = peps[bi].beads;
+      rounds.push({ peps, bi, best });
+    }
+  }
+
+  let W = 0, H = 0, G = null;
+  function size() {
+    const r = cv.getBoundingClientRect(), d = devicePixelRatio || 1;
+    W = r.width; H = r.height;
+    cv.width = Math.round(W * d); cv.height = Math.round(H * d);
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+    const pad = 18, top = 42, bot = H - 44;
+    const dz = { x0: pad, x1: W * 0.25 }, az = { x0: W * 0.32, x1: W * 0.64 }, rz = { x0: W * 0.71, x1: W - pad };
+    const step = Math.min(13, (dz.x1 - dz.x0) / (BEADS + 0.5));
+    const slots = [...Array(K)].map((_, k) => ({ x: (dz.x0 + dz.x1) / 2, y: top + 8 + (bot - top - 16) * k / (K - 1) }));
+    const cw = (az.x1 - az.x0) / 3, rh = (bot - top) / 2, wr = Math.min(cw, rh) * 0.4;
+    const wells = [...Array(K)].map((_, k) => ({ x: az.x0 + cw * (k % 3 + 0.5), y: top + rh * (Math.floor(k / 3) + 0.5), r: wr }));
+    const bw = (rz.x1 - rz.x0) / K;
+    const bars = [...Array(K)].map((_, k) => ({ x: rz.x0 + bw * (k + 0.5), w: Math.max(4, bw * 0.46) }));
+    G = { pad, top, bot, dz, az, rz, step, slots, wells, bars, bw, strip: H - 18 };
+  }
+
+  function text(s, x, y, color = SOFT, align = 'left') {
+    ctx.font = MONO; ctx.textAlign = align; ctx.textBaseline = 'middle';
+    ctx.fillStyle = color; ctx.fillText(s, x, y);
+  }
+
+  function bead(type, x, y, r) {
+    ctx.beginPath();
+    if (type === 2) { ctx.rect(x - r * 0.85, y - r * 0.85, r * 1.7, r * 1.7); ctx.fill(); return; }
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    if (type === 0) ctx.fill(); else { ctx.fillStyle = PAPER; ctx.fill(); ctx.stroke(); ctx.fillStyle = INK; }
+  }
+
+  function peptide(p, x, y, sc, grow, showMut) {
+    const s = G.step * sc, r = s * 0.34, n = Math.ceil(BEADS * grow - 1e-6), x0 = x - s * (BEADS - 1) / 2;
+    if (n < 1) return;
+    ctx.strokeStyle = INK; ctx.fillStyle = INK; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x0 + s * (n - 1), y); ctx.stroke();
+    for (let b = 0; b < n; b++) bead(p.beads[b], x0 + s * b, y, r);
+    if (showMut && p.mut < n) {
+      ctx.strokeStyle = SOFT; ctx.beginPath(); ctx.arc(x0 + s * p.mut, y, r + 2.5, 0, Math.PI * 2); ctx.stroke();
+    }
+  }
+
+  function well(w, response) {
+    ctx.lineWidth = 1; ctx.strokeStyle = FAINT;
+    ctx.beginPath(); ctx.arc(w.x, w.y, w.r, 0, Math.PI * 2); ctx.stroke();
+    // Three cells in the well, each with its nucleus; they darken as they respond.
+    const c = w.r * 0.3;
+    [[-0.38, -0.2, 0.3], [0.36, -0.28, -0.4], [0.02, 0.4, 0.1]].forEach(([dx, dy, a]) => {
+      const x = w.x + dx * w.r, y = w.y + dy * w.r;
+      ctx.beginPath(); ctx.ellipse(x, y, c * 1.25, c * 0.9, a, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(11,11,11,${0.62 * response})`; ctx.fill();
+      ctx.strokeStyle = SOFT; ctx.stroke();
+      ctx.beginPath(); ctx.arc(x + c * 0.15, y, Math.max(1, c * 0.28), 0, Math.PI * 2);
+      ctx.fillStyle = response > 0.5 ? PAPER : SOFT; ctx.fill();
+    });
+  }
+
+  function returnPath() {
+    const { rz, dz, bot, strip } = G, x1 = rz.x0 + 4, x0 = (dz.x0 + dz.x1) / 2;
+    return [[x1, bot + 6], [x1, strip], [x0, strip], [x0, bot + 6]];
+  }
+  function along(pts, f) {
+    const seg = []; let tot = 0;
+    for (let i = 1; i < pts.length; i++) { const l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); seg.push(l); tot += l; }
+    let d = f * tot;
+    for (let i = 0; i < seg.length; i++) {
+      if (d <= seg[i]) { const u = d / seg[i]; return [pts[i][0] + (pts[i + 1][0] - pts[i][0]) * u, pts[i][1] + (pts[i + 1][1] - pts[i][1]) * u]; }
+      d -= seg[i];
+    }
+    return pts[pts.length - 1];
+  }
+
+  function draw(T) {
+    if (!G) return;
+    ctx.clearRect(0, 0, W, H);
+    const ri = Math.floor(T / ROUND) % ROUNDS, t = T % ROUND;
+    const R = rounds[ri], prev = ri ? rounds[ri - 1] : null;
+    const { top, bot, dz, az, rz, slots, wells, bars } = G;
+    // Fade out at the end of the last round, before starting over.
+    ctx.globalAlpha = ri === ROUNDS - 1 ? 1 - clamp((t - ROUND + 700) / 600) : ri === 0 ? clamp(t / 400) : 1;
+
+    text('01  DESIGN', dz.x0, 18);
+    text('02  CELL ASSAY', az.x0, 18);
+    text('03  READOUT', rz.x0, 18);
+
+    // Return path for lab data.
+    const path = returnPath();
+    ctx.strokeStyle = FAINT; ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+    ctx.beginPath(); path.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke();
+    ctx.setLineDash([]);
+    // Arrowhead into design.
+    const [ax, ay] = path[3];
+    ctx.beginPath(); ctx.moveTo(ax - 4, ay + 6); ctx.lineTo(ax, ay); ctx.lineTo(ax + 4, ay + 6); ctx.strokeStyle = SOFT; ctx.stroke();
+    const lx = (path[1][0] + path[2][0]) / 2;
+    ctx.font = MONO; const lw = ctx.measureText('LAB DATA → MODEL').width;
+    ctx.fillStyle = PAPER; ctx.fillRect(lx - lw / 2 - 6, G.strip - 7, lw + 12, 14);
+    text('LAB DATA → MODEL', lx, G.strip, SOFT, 'center');
+
+    // Wells: last round's response fades as this round's peptides arrive.
+    wells.forEach((w, k) => {
+      const arrive = clamp((t - 1000 - k * 110) / 1300);
+      const now = R.peps[k].score * ease((t - 2350 - k * 110) / 600);
+      const before = prev ? prev.peps[k].score * (1 - ease((t - 600 - k * 110) / 700)) : 0;
+      well(w, Math.max(now, before));
+      if (arrive >= 1) peptide(R.peps[k], w.x, w.y + w.r + 9, 0.55, 1, false);
+    });
+
+    // Peptides: built in the design column, then carried to their wells.
+    R.peps.forEach((p, k) => {
+      const grow = clamp((t - k * 90) / 700);
+      const go = ease((t - 1000 - k * 110) / 1300);
+      if (go >= 1) return;
+      const s = slots[k], w = wells[k];
+      const tx = w.x, ty = w.y + w.r + 9;
+      const x = s.x + (tx - s.x) * go, y = s.y + (ty - s.y) * go - Math.sin(Math.PI * go) * 14;
+      peptide(p, x, y, 1 - 0.45 * go, grow, go < 0.05);
+    });
+
+    // Readout bars.
+    const maxH = bot - top - 22;
+    ctx.strokeStyle = FAINT; ctx.beginPath(); ctx.moveTo(rz.x0, bot + 0.5); ctx.lineTo(rz.x1, bot + 0.5); ctx.stroke();
+    if (prev) ctx.setLineDash([2, 3]);
+    ctx.beginPath(); ctx.moveTo(rz.x0, bot - maxH * (prev ? prev.best : 0) + 0.5); ctx.lineTo(prev ? rz.x1 : rz.x0, bot - maxH * (prev ? prev.best : 0) + 0.5);
+    ctx.strokeStyle = SOFT; ctx.stroke(); ctx.setLineDash([]);
+    const pick = ease((t - 3500) / 400);
+    bars.forEach((b, k) => {
+      const v = Math.max(R.peps[k].score * ease((t - 2600 - k * 90) / 700), prev ? prev.peps[k].score * (1 - ease((t - k * 60) / 600)) : 0);
+      if (v <= 0.002) return;
+      const h = maxH * v, isBest = k === R.bi && t > 2600;
+      ctx.fillStyle = isBest && pick > 0 ? INK : FAINT;
+      ctx.globalAlpha *= 1;
+      ctx.fillRect(b.x - b.w / 2, bot - h, b.w, h);
+      if (isBest && pick > 0) text(R.peps[k].score.toFixed(2), b.x, bot - h - 9, INK, 'center');
+    });
+
+    // Lab data travels back to the design engine.
+    if (t > 3900 && t < 5600) {
+      ctx.fillStyle = INK;
+      for (let j = 0; j < 4; j++) {
+        const f = clamp((t - 3900 - j * 140) / 1300);
+        if (f <= 0 || f >= 1) continue;
+        const [x, y] = along(path, ease(f));
+        ctx.fillRect(x - 2.5, y - 2.5, 5, 5);
+      }
+    }
+
+    // Round counter.
+    text(`ROUND ${String(ri + 1).padStart(2, '0')}`, rz.x1, 32, SOFT, 'right');
+    const shownBest = t > 3500 ? R.best : prev ? prev.best : 0;
+    text(shownBest ? `BEST ${shownBest.toFixed(2)}` : 'BEST —', rz.x1, G.strip, INK, 'right');
+    ctx.globalAlpha = 1;
+  }
+
+  let start = performance.now(), running = false, raf = 0;
+  const loop = now => { draw(now - start); raf = requestAnimationFrame(loop); };
+  function setRunning(on) {
+    if (reduce) { draw(3 * ROUND + 4200); return; }
+    if (on && !running) { running = true; raf = requestAnimationFrame(loop); }
+    if (!on && running) { running = false; cancelAnimationFrame(raf); }
+  }
+  size();
+  new ResizeObserver(() => { size(); if (!running) draw(reduce ? 3 * ROUND + 4200 : performance.now() - start); }).observe(cv);
+  new IntersectionObserver(([e]) => setRunning(e.isIntersecting)).observe(cv);
+  document.fonts && document.fonts.ready.then(() => { if (!running) draw(3 * ROUND + 4200); });
+})();
+</script>
+<script src="../molecule.js"></script>
+</body>
+</html>
