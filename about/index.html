@@ -77,17 +77,10 @@ h1 .word { display: block; }
 .entry .body { max-width: 62ch; }
 .entry p { margin: 0 0 1em; }
 .entry p:last-child { margin-bottom: 0; }
-.body a { color: inherit; text-decoration: underline; text-decoration-color: rgba(11, 11, 11, .3); text-decoration-thickness: 1px; text-underline-offset: 3px; transition: text-decoration-color .2s; }
-.body a:hover { text-decoration-color: var(--ink); }
 .loop { margin: 16px 0 0; border: 1px solid var(--rule); background: var(--paper); }
 .loop canvas { display: block; width: 100%; aspect-ratio: 2.3 / 1; min-height: 220px; }
 .loop figcaption { border-top: 1px solid var(--rule); padding: 10px 20px; color: var(--soft); font: 400 12px/1.5 var(--mono); letter-spacing: .02em; }
 @media (max-width: 560px) { .loop canvas { aspect-ratio: 1.45 / 1; } }
-.example {
-  margin: 1.4em 0 0; padding: 16px 20px; border: 1px solid var(--rule); background: var(--paper);
-  color: var(--grey);
-}
-.example .mono { display: block; color: var(--soft); margin-bottom: 8px; }
 
 footer {
   border-top: 1px solid var(--rule); padding-top: 32px; margin-top: 8px;
@@ -126,9 +119,8 @@ footer .soft { color: var(--soft); }
   <section class="entry" aria-labelledby="what">
     <h2 class="mono" id="what"><span class="n">01</span>What</h2>
     <div class="body">
-      <p>AI is making exponential progress in technical fields including <a href="https://www.physicsx.ai/" target="_blank" rel="noopener">industrial engineering</a>, <a href="https://www.ft.com/content/5c2ae092-14af-4bd1-8e3d-8996755cba6a" target="_blank" rel="noopener">materials discovery</a>, and <a href="https://www.nobelprize.org/prizes/chemistry/2024/press-release/" target="_blank" rel="noopener">biopharma</a>. We bring these capabilities to beauty brands to radically alter the technical innovation cycle: new and better molecules and formulations, engineered faster and with greater precision.</p>
-      <p>Early-stage drug discovery is <a href="https://www.fiercebiotech.com/biotech/isomorphic-labs-adds-merck-ai-drug-discovery-roster-days-after-5b-raise" target="_blank" rel="noopener">being transformed</a> by rapid progress in AI. This is particularly true of molecule design, where models are now powerful enough to reason about molecular structures. The bottleneck is moving to experimentation: in response, <a href="https://www.biorxiv.org/content/10.1101/2025.02.19.639050v1" target="_blank" rel="noopener">lab-in-the-loop</a>, where AI design drives in vitro experiments, is emerging as a potent format to rapidly engineer better pharmaceutical molecules.</p>
-      <p>We adapt the cutting edge of molecule discovery to the consumer space. Beauty brands are at the forefront of the mounting consumer demand for newer, more personalized molecules that better connect wellness to health. We are building the platform to meet this demand.</p>
+      <p>AI is making exponential progress in technical fields including industrial engineering, materials discovery, and biopharma. Early-stage drug discovery is being transformed by models powerful enough to reason about molecular structures.</p>
+      <p>Beauty brands are at the forefront of the mounting consumer demand for newer, more personalized molecules that better connect wellness to health. We are building the platform to meet this demand, and bring the cutting edge of molecule discovery to beauty brands: new and better molecules and formulations, engineered faster and with greater precision.</p>
     </div>
   </section>
 
@@ -136,11 +128,7 @@ footer .soft { color: var(--soft); }
     <h2 class="mono" id="how"><span class="n">02</span>How</h2>
     <div class="body">
       <p>We partner with beauty brands to build new molecules and formulations that meet their objectives, with increasingly higher performance.</p>
-      <p>We build a lab-in-the-loop for beauty, so that we can best discover new peptides and molecules with optimal lab data, both in terms of safety and efficacy. By combining AI design with in-house experiments, we explore vastly more design space than possible otherwise, guided by concrete lab data.</p>
-      <div class="example">
-        <span class="mono">Example</span>
-        We might engineer peptides or small molecules with high performance on skin clarification. We would rapidly iterate over hundreds of designs, feeding lab data back to our design engine in iterative fashion, resulting in molecules that meet the objectives of our partner.
-      </div>
+      <p>We build a lab-in-the-loop for beauty, so that we can best discover new peptides and molecules with optimal lab data, both in terms of safety and efficacy. By combining AI design with in vitro experiments, we explore vastly more design space than possible otherwise, guided by concrete lab data.</p>
       <figure class="loop">
         <canvas id="loop" role="img" aria-label="Schematic of the lab-in-the-loop: designed peptides go to a cellular assay, the readout picks the best one, and the lab data feeds the next round of designs, whose scores climb round after round."></canvas>
         <figcaption>Lab-in-the-loop, schematically: each round, new peptide designs are tested on cells, and the readout guides the next round.</figcaption>
